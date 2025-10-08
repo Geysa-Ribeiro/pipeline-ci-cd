@@ -1,0 +1,9 @@
+﻿# Dependencies
+/node_modules
+/.vercel
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+# Build
+/build
