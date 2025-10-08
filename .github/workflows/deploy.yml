@@ -1,0 +1,53 @@
+﻿name: CI/CD Pipeline (Testes e Deploy Vercel)
+
+on:
+  push:
+    branches:
+      - main 
+  pull_request:
+    branches:
+      - main 
+
+jobs:
+  build_and_deploy:
+    runs-on: ubuntu-latest
+    
+    
+    env:
+      NODE_VERSION: '18' 
+      
+    steps:
+      - name: ⬇️ Checkout do Código
+        uses: actions/checkout@v4
+
+      # --- ETAPA DE INTEGRAÇÃO CONTÍNUA (CI) ---
+      
+      - name: ⚙️ Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm' 
+          
+      - name: 📦 Instalar Dependências
+        run: npm install
+
+      - name: 🧪 Rodar Testes Automatizados
+        run: npm test
+
+      # --- ETAPA DE ENTREGA CONTÍNUA (CD) ---
+      
+      - name: 🚀 Deploy para o Vercel (Produção)
+      
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: npx vercel --prod --token=${{ secrets.VERCEL_TOKEN }}
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+          
+      - name: 🌐 Deploy de Preview do Vercel (para Pull Requests)
+
+        if: github.event_name != 'push' || github.ref != 'refs/heads/main'
+        run: npx vercel deploy --token=${{ secrets.VERCEL_TOKEN }}
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
