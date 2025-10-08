@@ -1,7 +1,7 @@
 ﻿// src/index.js - Versão ajustada para Vercel Serverless
 
-function soma(a, b) {
-  return a + b;
+function multiplicar(a, b) {
+  return a * b;
 }
 
 const express = require('express');
